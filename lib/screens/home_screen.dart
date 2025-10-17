@@ -1,4 +1,5 @@
 import 'package:cours_geomatique_2025/models/menu.dart';
+import 'package:cours_geomatique_2025/screens/scan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -37,6 +38,24 @@ class _HomeScreenState extends State<HomeScreen> {
       amount: 15000,
       dateTime: DateTime.now().add(Duration(days: -1)),
       type: TransactionType.retrait,
+    ),
+    Transaction(
+      name: 'Paiement',
+      amount: 5000,
+      dateTime: DateTime.now().add(Duration(days: -2)),
+      type: TransactionType.paiement,
+    ),
+    Transaction(
+      name: 'Bamba FALL 77 777 77 77',
+      amount: 10000,
+      dateTime: DateTime.now().add(Duration(days: -3)),
+      type: TransactionType.envoi,
+    ),
+    Transaction(
+      name: 'Bamba Diop 77 777 77 78 🇸🇳',
+      amount: 10000,
+      dateTime: DateTime.now().add(Duration(days: -3)),
+      type: TransactionType.reception,
     ),
   ];
 
@@ -90,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 1000,
+              height: MediaQuery.of(context).size.height,
               child: Stack(
                 children: [
                   Container(color: Colors.deepPurple),
@@ -116,30 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         physics: ClampingScrollPhysics(),
                         itemBuilder: (context, index) {
                           Menu m = menuList[index];
-                          return GestureDetector(
-                            onTap: () {
-                              print("Allez vers ${m.name}");
-                            },
-                            child: Column(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: m.color.withValues(alpha: .15),
-                                    borderRadius: BorderRadius.circular(45),
-                                  ),
-                                  child: Icon(m.icon, color: m.color, size: 35),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  m.name,
-                                  style: GoogleFonts.dmSans(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
+                          return optionWidget(m);
                         },
                       ),
                       Divider(
@@ -153,55 +149,33 @@ class _HomeScreenState extends State<HomeScreen> {
                         physics: ClampingScrollPhysics(),
                         itemBuilder: (context, index) {
                           Transaction t = tList[index];
-                          bool isMinus =
-                              t.type == TransactionType.retrait ||
-                                  t.type == TransactionType.envoi ||
-                                  t.type == TransactionType.paiement
-                              ? true
-                              : false;
-                          print(isMinus);
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                              horizontal: 16,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      t.name,
-                                      style: GoogleFonts.dmSans(
-                                        color: Colors.deepPurple,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${isMinus ? "-" : ""}${t.amount}F',
-                                      style: GoogleFonts.dmSans(
-                                        color: Colors.deepPurple,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  DateFormat(
-                                    'dd MMMM yyyy à HH:mm',
-                                  ).format(t.dateTime),
-                                  style: GoogleFonts.dmSans(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
+                          return transactionWidget(t);
                         },
+                      ),
+                      SizedBox(height: 30),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurple.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.search, color: Colors.deepPurple),
+                            SizedBox(width: 5),
+                            Text(
+                              "Rechercher",
+                              style: GoogleFonts.dmSans(
+                                color: Colors.deepPurple,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -217,7 +191,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget cardWidget() {
     return GestureDetector(
       onTap: () {
-        print("Allez vers le scanner");
+        /*Permet d'aller d'une page vers une
+        autre avec l'option de fermer la page precedente*/
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => ScanScreen()),
+          (route) => true,
+        );
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 50),
@@ -265,6 +245,73 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget transactionWidget(Transaction t) {
+    bool isMinus =
+        t.type == TransactionType.retrait ||
+            t.type == TransactionType.envoi ||
+            t.type == TransactionType.paiement
+        ? true
+        : false;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                t.name,
+                style: GoogleFonts.dmSans(
+                  color: Colors.deepPurple,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '${isMinus ? "-" : ""}${t.amount}F',
+                style: GoogleFonts.dmSans(
+                  color: Colors.deepPurple,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            DateFormat('dd MMMM yyyy à HH:mm').format(t.dateTime),
+            style: GoogleFonts.dmSans(
+              color: Colors.grey,
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  optionWidget(Menu m) {
+    return GestureDetector(
+      onTap: () {
+        print("Allez vers ${m.name}");
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: m.color.withValues(alpha: .15),
+              borderRadius: BorderRadius.circular(45),
+            ),
+            child: Icon(m.icon, color: m.color, size: 35),
+          ),
+          SizedBox(height: 4),
+          Text(m.name, style: GoogleFonts.dmSans(fontWeight: FontWeight.w600)),
+        ],
       ),
     );
   }
