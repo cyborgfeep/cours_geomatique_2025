@@ -38,6 +38,7 @@ dependencies:
   pretty_qr_code: ^3.5.0
   intl: any
   camera: ^0.11.2
+  toggle_switch: ^2.3.0
 
 dev_dependencies:
   flutter_test:

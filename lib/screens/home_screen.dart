@@ -1,11 +1,13 @@
 import 'package:cours_geomatique_2025/models/menu.dart';
 import 'package:cours_geomatique_2025/screens/scan_screen.dart';
+import 'package:cours_geomatique_2025/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 import '../models/transaction.dart';
+import '../widgets/card_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,7 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.deepPurple,
             leading: IconButton(
               onPressed: () {
-                print("Settings");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsScreen()),
+                );
               },
               icon: Icon(Icons.settings, size: 30, color: Colors.white),
             ),
@@ -125,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Column(
                     children: [
-                      cardWidget(),
+                      CardWidget(),
                       GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
@@ -184,67 +189,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget cardWidget() {
-    return GestureDetector(
-      onTap: () {
-        /*Permet d'aller d'une page vers une
-        autre avec l'option de fermer la page precedente*/
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => ScanScreen()),
-          (route) => true,
-        );
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 50),
-        width: 400,
-        height: 160,
-        decoration: BoxDecoration(
-          color: Colors.blue.shade300,
-          borderRadius: BorderRadius.circular(15),
-          image: DecorationImage(
-            image: AssetImage("assets/images/bg.png"),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Colors.blue, BlendMode.srcIn),
-          ),
-        ),
-        child: Center(
-          child: Container(
-            width: 120,
-            height: 140,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 105,
-                  height: 105,
-                  margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: PrettyQrView.data(
-                    data:
-                        'google.comhddhtgdhfhfghfhhdgfhgfdhfgddhfgdhgfgfhgfhfghgfhfghhgfhgfhgfhfghf',
-                  ),
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.camera_alt, size: 15),
-                    SizedBox(width: 5),
-                    Text("Scanner"),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
